@@ -1,6 +1,7 @@
 from bs4 import BeautifulSoup as bs 
 import requests as rr
-import sqlite3  
+import sqlite3
+
 
 class song:
     def __init__(self):
@@ -26,8 +27,20 @@ class song:
             self.name = self.polivka.title.text.split("-")[1].strip()
             self.songtext = self.polivka.find_all("div", id="songtext")
     def load(self):
-        db = sqlite3.connect("db.sqlite")
-        cursor = conn.cursor()
+        pass  
+    def save(self):
+        pass
+    
 
+    def save(self, db_path="dat.db"):
+        if not self.author or not self.name:
+            print("Song není naparsovaný.")
+            return
 
-           
+        conn = sqlite3.connect(db_path)
+        c = conn.cursor()
+
+        c.execute("""
+            INSERT INTO songs (author, title, lyrics, url)
+            VALUES (?, ?, ?, ?)
+        """, (self.author, self.name, self.songtext, self.url))
