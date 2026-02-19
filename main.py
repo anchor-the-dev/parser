@@ -1,7 +1,7 @@
 from akordy import song
 
 test = song()
-test.url = input("zadej url: ")
+test.url = "https://pisnicky-akordy.cz/traband/lovci-lebek"
+print (test.songtext)
 
-print(test.author)
-print(test.name)
+
