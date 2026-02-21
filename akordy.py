@@ -28,17 +28,17 @@ class song:
         self.polivka = bs(self.raw, "html.parser")
         self.author = self.polivka.title.text.split("-")[0].strip()
         self.name = self.polivka.title.text.split("-")[1].strip()
-
+        song_pre = self.polivka.find("div", id="songtext").find("pre")
+        if song_pre:
+            self.songtext = song_pre.get_text()
     def curl(self):
         if self.url:
             if not self.raw:
                 self.parse_url()
 
-                self.response = rr.get(self.url)
+                response = rr.get(self.url)
                 self.raw = response.text
                 self.parse()
-        #        divs = self.polivka.find_all("div", id="songtext")
-        #        self.songtext = "\n".join(div.get_text(strip=True) for div in divs)
 
     def load(self):
         self.parse_url()
