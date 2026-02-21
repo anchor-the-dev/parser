@@ -1,6 +1,11 @@
 from akordy import song
 
 test = song()
-test.url = "https://pisnicky-akordy.cz/traband/lovci-lebek"
-#print (test.songtext)
+i = input("url zadej: ")
+if i:
+    test.url = i
+else:
+    test.url = "https://pisnicky-akordy.cz/spiritual-kvintet/batalion"
 test.load()
+test.curl()
+test.save()

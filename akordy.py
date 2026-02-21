@@ -1,46 +1,52 @@
 from bs4 import BeautifulSoup as bs 
 import requests as rr
-import sqlite3
-
-
+import os 
+## name nazev unicode z tittle 
+## author author unicode taky z tittle 
+## raw cely html stranky 
+## polivka BeautifulSoup parser 
+## asau asciiauthor autor z url pasnuty nazev filesystem 
+## asnm asciiname nazev pisnicky parsnuty z url zaroven nazev soboru
+##
 class song:
     def __init__(self):
         self.name = ""
         self.author = ""
         self.raw = None
         self.polivka = None
-        self._url = None
+        self.url = None
         self.songtext = None
 
-    @property
-    def url(self):
-        return self._url
-
-    @url.setter
-    def url(self, value):
-        self._url = value
+    def parse_url(self):
+        parts = self.url.strip("/").split("/")
+        self.asau = parts[-2]
+        self.asnm = parts[-1]
+        self.path = f"data/{self.asau}/{self.asnm}"
+    def parse(self):
+        self.polivka = bs(self.raw, "html.parser")
+        self.author = self.polivka.title.text.split("-")[0].strip()
+        self.name = self.polivka.title.text.split("-")[1].strip()
+    def curl(self):
         if self.url:
-            response = rr.get(value)
-            self.raw = response.text
-            self.polivka = bs(self.raw, "html.parser")
-            self.author = self.polivka.title.text.split("-")[0].strip()
-            self.name = self.polivka.title.text.split("-")[1].strip()
-            self.songtext = self.polivka.find_all("div", id="songtext")
+            if not self.raw: 
+                self.parse_url() 
+                
+                self.response = rr.get(self.url)
+                self.raw =response.text
+                self.parse()
+        #        divs = self.polivka.find_all("div", id="songtext")
+        #        self.songtext = "\n".join(div.get_text(strip=True) for div in divs)
     def load(self):
-        pass  
+        self.parse_url()
+        if os.path.exists(f"{self.path}/raw.html"):
+            with open(f"{self.path}/raw.html", "r", encoding="utf-8") as f:
+                self.raw = f.read()
+                self.parse()
     def save(self):
-        pass
-    
+        if self.url: 
+            os.makedirs(f"{self.path}", exist_ok=True)
+            with open(f"{self.path}/raw.html","w", encoding="utf-8") as f:
+                f.write(self.raw)
 
-    def save(self, db_path="dat.db"):
-        if not self.author or not self.name:
-            print("Song není naparsovaný.")
-            return
 
-        conn = sqlite3.connect(db_path)
-        c = conn.cursor()
 
-        c.execute("""
-            INSERT INTO songs (author, title, lyrics, url)
-            VALUES (?, ?, ?, ?)
-        """, (self.author, self.name, self.songtext, self.url))
