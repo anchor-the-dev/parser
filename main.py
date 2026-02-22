@@ -6,4 +6,4 @@ test.url = "https://pisnicky-akordy.cz/vypsana-fixa/schovana"
 test.load()
 test.curl()
 test.save()
-print (test.songtext)
+print(test.songtext)
