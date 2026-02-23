@@ -1,7 +1,7 @@
 from bs4 import BeautifulSoup as bs
 import requests as rr
 import os
-
+import pypandoc
 ## name nazev unicode z tittle
 ## author author unicode taky z tittle
 ## raw cely html stranky
@@ -42,7 +42,7 @@ class song:
 
     def load(self):
         self.parse_url()
-        if os.path.exists(f"{self.path}/raw.html"):
+        if os.path.exists(f"{self.path}/raw."):
             with open(f"{self.path}/raw.html", "r", encoding="utf-8") as f:
                 self.raw = f.read()
                 self.parse()
@@ -52,4 +52,5 @@ class song:
             os.makedirs(f"{self.path}", exist_ok=True)
             with open(f"{self.path}/raw.html", "w", encoding="utf-8") as f:
                 f.write(self.raw)
-
+            html_content = f"<pre>{self.songtext}</pre>"
+            pypandoc.convert_text(html_content, 'html', format='html', outputfile=f"{self.path}/text.html")
